@@ -1,0 +1,30 @@
+
+
+## 请自行修改下面信息
+
+spring:
+  application:
+    name: shiro-jwt-applet
+  jpa:
+    hibernate:
+      ddl-auto: create      # 请自行修改 请自行修改 请自行修改
+
+
+#  datasource本地配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/yourdatabase
+    username: yourname
+    password: yourpass
+    driver-class-name: com.mysql.jdbc.Driver
+
+#  redis本地配置 请自行配置
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+
+#  微信小程序配置 appid /appsecret
+wx:
+  applet:
+    appid: yourappid
+    appsecret: yourappsecret
