@@ -4,7 +4,9 @@
 1. 微信小程序登陆流程图说明 : 
 ![avatar](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/image/api-login.jpg)
  
-    上图是小程序登陆的官方流程图说明,如果有对官方说明不清楚的地方,也可参看我的博客 : https://www.cnblogs.com/ealenxie/p/9888064.html
+    上图是小程序登陆的官方流程图说明,官方地址 : https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/login.html
+    
+    如果有对官方说明不清楚的地方,也可参看我的博客 : https://www.cnblogs.com/ealenxie/p/9888064.html
 
 2. 使用运行本例的前提注意以下几点 : 
 
