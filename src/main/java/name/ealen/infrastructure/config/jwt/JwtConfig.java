@@ -27,7 +27,7 @@ public class JwtConfig {
     /**
      * JWT 过期时间值 这里写死为和小程序时间一致 7200 秒，也就是两个小时
      */
-    private static long expire_time = 7200 * 1000;
+    private static long expire_time = 7200;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -48,10 +48,10 @@ public class JwtConfig {
                 .withClaim("wxOpenId", wxAccount.getWxOpenid())
                 .withClaim("sessionKey", wxAccount.getSessionKey())
                 .withClaim("jwt-id", jwtId)
-                .withExpiresAt(new Date(System.currentTimeMillis() + expire_time))  //JWT 配置过期时间的正确姿势
+                .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
-        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, expire_time/1000, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, expire_time, TimeUnit.MINUTES);
         return token;
     }
 
@@ -75,12 +75,12 @@ public class JwtConfig {
                     .withClaim("wxOpenId", getWxOpenIdByToken(redisToken))
                     .withClaim("sessionKey", getSessionKeyByToken(redisToken))
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
-                    .acceptExpiresAt(System.currentTimeMillis() + expire_time )  //JWT 正确的配置续期姿势
+                    .acceptExpiresAt(System.currentTimeMillis() + expire_time*1000 )  //JWT 正确的配置续期姿势
                     .build();
             //3 . 验证token
             verifier.verify(redisToken);
             //4 . Redis缓存JWT续期
-            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, expire_time/1000, TimeUnit.MICROSECONDS);
+            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, expire_time, TimeUnit.MINUTES);
             return true;
         } catch (Exception e) { //捕捉到任何异常都视为校验失败
             return false;
