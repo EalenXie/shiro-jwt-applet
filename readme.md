@@ -10,7 +10,7 @@
 
 2. 使用运行本例的前提注意以下几点 : 
 
-    1. 本例是一个基于**Shiro**和**JWT(Json Web Token)**实现自定义登陆态的完整例子,你需要了解的技术栈 : Shiro,JWT,SpringBoot,JPA,Redis 
+    1. 本例是一个基于**Shiro**和**JWT**实现自定义登陆态的完整例子,你需要了解的技术栈 : Shiro,JWT,SpringBoot,JPA,Redis 
 
     2. 已有小程序的**appid**,**appsecret**,请准备一个数据源和Redis，并将这些信息配置到 src/main/resource/application.yml中
 
@@ -26,13 +26,16 @@
     
     5. 如果对此结构有所兴趣，可以参考一下DDD相关资料，也可以参看我的博客 : https://www.cnblogs.com/ealenxie/p/9559781.html
     
-4. 站在巨人的肩膀，本例参考内容 : 
+    
+4. 项目运行，检查数据库的连接是否正常，检查redis的连接是否正常。
+    
+5. 站在巨人的肩膀，本例参考内容 : 
     
     Shiro相关教程 : https://github.com/apache/shiro  http://shiro.apache.org/web.html
     
     Shiro+JWT简易教程 : https://github.com/Smith-Cruise/Spring-Boot-Shiro
     
-5. 声明 :
+6. 声明 :
 
     实现小程序的自定义登陆有很多种，本文是基于Shiro，JWT的一个实现。
     
