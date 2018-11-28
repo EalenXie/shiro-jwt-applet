@@ -51,7 +51,7 @@ public class JwtConfig {
                 .withExpiresAt(new Date(System.currentTimeMillis() + expire_time))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
-        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, expire_time, TimeUnit.MICROSECONDS);
+        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, expire_time/1000, TimeUnit.MINUTES);
         return token;
     }
 
@@ -80,7 +80,7 @@ public class JwtConfig {
             //3 . 验证token
             verifier.verify(redisToken);
             //4 . Redis缓存JWT续期
-            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, expire_time, TimeUnit.MICROSECONDS);
+            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, expire_time/1000, TimeUnit.MICROSECONDS);
             return true;
         } catch (Exception e) { //捕捉到任何异常都视为校验失败
             return false;
