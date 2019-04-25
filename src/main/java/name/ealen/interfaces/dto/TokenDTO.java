@@ -4,11 +4,11 @@ package name.ealen.interfaces.dto;
  * Created by EalenXie on 2018/11/26 18:49.
  * DTO 返回值token对象
  */
-public class Token {
+public class TokenDTO {
 
     private String token;
 
-    public Token(String token) {
+    public TokenDTO(String token) {
         this.token = token;
     }
 

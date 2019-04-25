@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +28,7 @@ public class JwtConfig {
     /**
      * JWT 过期时间值 这里写死为和小程序时间一致 7200 秒，也就是两个小时
      */
-    private static long expire_time = 7200;
+    private static final long EXPIRE_TIME = 7200;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -48,10 +49,10 @@ public class JwtConfig {
                 .withClaim("wxOpenId", wxAccount.getWxOpenid())
                 .withClaim("sessionKey", wxAccount.getSessionKey())
                 .withClaim("jwt-id", jwtId)
-                .withExpiresAt(new Date(System.currentTimeMillis() + expire_time*1000))  //JWT 配置过期时间的正确姿势
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE_TIME * 1000))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
-        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, expire_time, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, EXPIRE_TIME, TimeUnit.SECONDS);
         return token;
     }
 
@@ -67,20 +68,20 @@ public class JwtConfig {
         try {
             //1 . 根据token解密，解密出jwt-id , 先从redis中查找出redisToken，匹配是否相同
             String redisToken = redisTemplate.opsForValue().get("JWT-SESSION-" + getJwtIdByToken(token));
+            if (Objects.isNull(redisToken)) return false;
             if (!redisToken.equals(token)) return false;
-
             //2 . 得到算法相同的JWTVerifier
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
             JWTVerifier verifier = JWT.require(algorithm)
                     .withClaim("wxOpenId", getWxOpenIdByToken(redisToken))
                     .withClaim("sessionKey", getSessionKeyByToken(redisToken))
                     .withClaim("jwt-id", getJwtIdByToken(redisToken))
-                    .acceptExpiresAt(System.currentTimeMillis() + expire_time*1000 )  //JWT 正确的配置续期姿势
+                    .acceptExpiresAt(System.currentTimeMillis() + EXPIRE_TIME * 1000)  //JWT 正确的配置续期姿势
                     .build();
             //3 . 验证token
             verifier.verify(redisToken);
             //4 . Redis缓存JWT续期
-            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, expire_time, TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, EXPIRE_TIME, TimeUnit.SECONDS);
             return true;
         } catch (Exception e) { //捕捉到任何异常都视为校验失败
             return false;

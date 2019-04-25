@@ -7,7 +7,7 @@ import name.ealen.domain.vo.Code2SessionResponse;
 import name.ealen.infrastructure.config.jwt.JwtConfig;
 import name.ealen.infrastructure.util.HttpUtil;
 import name.ealen.infrastructure.util.JSONUtil;
-import name.ealen.interfaces.dto.Token;
+import name.ealen.interfaces.dto.TokenDTO;
 import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -68,7 +68,7 @@ public class WxAccountService implements WxAppletService {
      * @return 返回后端 自定义登陆态 token  基于JWT实现
      */
     @Override
-    public Token wxUserLogin(String code) {
+    public TokenDTO wxUserLogin(String code) {
         //1 . code2session返回JSON数据
         String resultJson = code2Session(code);
         //2 . 解析数据
@@ -88,7 +88,7 @@ public class WxAccountService implements WxAppletService {
             wxAccountRepository.save(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
             String token = jwtConfig.createTokenByWxAccount(wxAccount);
-            return new Token(token);
+            return new TokenDTO(token);
         }
     }
 }

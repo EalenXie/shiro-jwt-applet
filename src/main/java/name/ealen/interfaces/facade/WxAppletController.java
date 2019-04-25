@@ -1,9 +1,11 @@
 package name.ealen.interfaces.facade;
 
 import name.ealen.application.WxAppletService;
+import name.ealen.interfaces.dto.CodeDTO;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -26,14 +28,8 @@ public class WxAppletController {
      * 返回给小程序端 自定义登陆态 token
      */
     @PostMapping("/api/wx/user/login")
-    public ResponseEntity wxAppletLoginApi(@RequestBody Map<String, String> request) {
-        if (!request.containsKey("code") || request.get("code") == null || request.get("code").equals("")) {
-            Map<String, String> result = new HashMap<>();
-            result.put("msg", "缺少参数code或code不合法");
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        } else {
-            return new ResponseEntity<>(wxAppletService.wxUserLogin(request.get("code")), HttpStatus.OK);
-        }
+    public ResponseEntity wxAppletLoginApi(@RequestBody @Validated CodeDTO request) {
+        return new ResponseEntity<>(wxAppletService.wxUserLogin(request.getCode()), HttpStatus.OK);
     }
 
     /**
