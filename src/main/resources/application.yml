@@ -8,6 +8,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create      # 请自行修改 请自行修改 请自行修改
+    open-in-view: false     # 关闭 OSIV
 
 
 #  datasource本地配置
