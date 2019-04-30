@@ -39,13 +39,13 @@ public class ControllerExceptionAdvice {
             response.setLocalizedMessage(throwable.getLocalizedMessage());
             response.setMessage(throwable.getMessage());
             log.error("Exception printStackTrace", throwable);
-            if (request != null) {
+            if (Objects.nonNull(request)) {
                 response.setRequesterIp(HttpUtil.getIpAddress(request));
                 response.setRequestUrl(request.getRequestURL().toString());
                 response.setRequestMethod(request.getMethod());
                 response.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
                 Integer statusCode = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-                if (statusCode != null) response.setStatusCode(statusCode);
+                if (Objects.nonNull(statusCode)) response.setStatusCode(statusCode);
                 else response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
             if (throwable instanceof MethodArgumentNotValidException) {

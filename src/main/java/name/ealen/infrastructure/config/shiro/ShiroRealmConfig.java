@@ -3,6 +3,7 @@ package name.ealen.infrastructure.config.shiro;
 
 import name.ealen.domain.vo.JwtToken;
 import name.ealen.infrastructure.config.jwt.JwtConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -70,9 +71,9 @@ public class ShiroRealmConfig {
                 String jwtToken = (String) token.getCredentials();
                 String wxOpenId = jwtConfig.getWxOpenIdByToken(jwtToken);
                 String sessionKey = jwtConfig.getSessionKeyByToken(jwtToken);
-                if (wxOpenId == null || wxOpenId.equals(""))
+                if (StringUtils.isEmpty(wxOpenId))
                     throw new AuthenticationException("user account not exits , please check your token");
-                if (sessionKey == null || sessionKey.equals(""))
+                if (StringUtils.isEmpty(sessionKey))
                     throw new AuthenticationException("sessionKey is invalid , please check your token");
                 if (!jwtConfig.verifyToken(jwtToken))
                     throw new AuthenticationException("token is invalid , please check your token");
