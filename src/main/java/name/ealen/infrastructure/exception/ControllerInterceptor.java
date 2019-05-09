@@ -32,11 +32,8 @@ public class ControllerInterceptor {
             }
         }
         if (activeProfiles.length != 0) {
-            profile = new StringBuilder(activeProfiles[0]);
-            if (activeProfiles.length > 1) {
-                for (int i = 1; i < activeProfiles.length; i++) {
-                    profile.append(",").append(activeProfiles[i]);
-                }
+            for (String activeProfile : activeProfiles) {
+                profile.append(",").append(activeProfile);
             }
         }
         this.profiles = profile.toString();
