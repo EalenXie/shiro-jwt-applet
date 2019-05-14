@@ -13,13 +13,16 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by EalenXie on 2018/11/8 16:25.
@@ -46,7 +49,6 @@ public class ControllerExceptionAdvice {
                 response.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
                 Integer statusCode = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
                 if (Objects.nonNull(statusCode)) response.setStatusCode(statusCode);
-                else response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
             if (throwable instanceof MethodArgumentNotValidException) {
                 MethodArgumentNotValidException exception = ((MethodArgumentNotValidException) throwable);
@@ -54,32 +56,27 @@ public class ControllerExceptionAdvice {
                     response.setRequestBody(JSON.toJSON(exception.getBindingResult().getTarget()).toString());
                 }
                 List<FieldError> fieldErrors = ((MethodArgumentNotValidException) throwable).getBindingResult().getFieldErrors();
-                Map<String, String> params = new HashMap<>();
+                Map<String, String> params = new ConcurrentHashMap<>();
                 response.setErrorParams(JSON.toJSON(params));
                 for (FieldError error : fieldErrors) {
                     params.put(error.getField(), error.getDefaultMessage());
                 }
                 response.setErrorParams(JSON.toJSON(params));
                 response.setStatusCode(HttpStatus.BAD_REQUEST.value());
-            } else if (throwable instanceof HttpServerErrorException) {
-                HttpServerErrorException serverError = (HttpServerErrorException) throwable;
-                HttpStatus status = serverError.getStatusCode();
-                response.setResponseBody("" + serverError.getResponseBodyAsString());
+            } else if (throwable instanceof HttpStatusCodeException) {
+                HttpStatusCodeException httpException = (HttpStatusCodeException) throwable;
+                HttpStatus status = httpException.getStatusCode();
+                response.setResponseBody("" + httpException.getResponseBodyAsString());
                 response.setStatusCode(status.value());
-                response.setStatusText("" + serverError.getStatusText());
-                response.setStatusReasonPhrase(status.getReasonPhrase());
-            } else if (throwable instanceof HttpClientErrorException) {
-                HttpClientErrorException clientError = (HttpClientErrorException) throwable;
-                HttpStatus status = clientError.getStatusCode();
-                response.setResponseBody("" + clientError.getResponseBodyAsString());
-                response.setStatusCode(status.value());
-                response.setStatusText("" + clientError.getStatusText());
+                response.setStatusText("" + httpException.getStatusText());
                 response.setStatusReasonPhrase(status.getReasonPhrase());
             } else if (throwable instanceof SQLException) {
                 response.setStatusText(((SQLException) throwable).getSQLState());
             } else if (throwable instanceof UnauthenticatedException) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED.value());
             }
+            if (Objects.isNull(response.getStatusCode()))
+                response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         } catch (Exception ignore) {
             log.info("Exception ignore");
         } finally {
