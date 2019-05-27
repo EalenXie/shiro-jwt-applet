@@ -1,5 +1,7 @@
 package name.ealen.domain.entity;
 
+import lombok.Data;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Entity;
@@ -14,49 +16,16 @@ import java.util.Date;
  */
 @Entity
 @Table
+@Data
 public class WxAccount {
 
     @Id
     @GeneratedValue
     private Integer id;
-
     private String wxOpenid;
-
     private String sessionKey;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @LastModifiedDate
     private Date lastTime;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getWxOpenid() {
-        return wxOpenid;
-    }
-
-    public void setWxOpenid(String wxOpenid) {
-        this.wxOpenid = wxOpenid;
-    }
-
-    public String getSessionKey() {
-        return sessionKey;
-    }
-
-    public void setSessionKey(String sessionKey) {
-        this.sessionKey = sessionKey;
-    }
-
-    public Date getLastTime() {
-        return lastTime;
-    }
-
-    public void setLastTime(Date lastTime) {
-        this.lastTime = lastTime;
-    }
 
 }

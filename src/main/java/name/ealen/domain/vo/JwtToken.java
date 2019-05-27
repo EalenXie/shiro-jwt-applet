@@ -1,11 +1,13 @@
 package name.ealen.domain.vo;
 
+import lombok.Data;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
  * Created by EalenXie on 2018/11/22 18:21.
  * 鉴权用的token vo ，实现 AuthenticationToken
  */
+@Data
 public class JwtToken implements AuthenticationToken {
 
     private String token;
@@ -24,11 +26,4 @@ public class JwtToken implements AuthenticationToken {
         return token;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

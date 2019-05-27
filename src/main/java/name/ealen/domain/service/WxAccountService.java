@@ -84,7 +84,6 @@ public class WxAccountService implements WxAppletService {
             }
             //4 . 更新sessionKey和 登陆时间
             wxAccount.setSessionKey(response.getSession_key());
-            wxAccount.setLastTime(new Date());
             wxAccountRepository.save(wxAccount);
             //5 . JWT 返回自定义登陆态 Token
             String token = jwtConfig.createTokenByWxAccount(wxAccount);
