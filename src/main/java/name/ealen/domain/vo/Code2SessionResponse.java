@@ -5,7 +5,7 @@ import lombok.Data;
 
 /**
  * 微信小程序 Code2Session 接口返回值 对象
- * 具体可以参考小程序官方API说明 : https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/code2Session.html
+ * 具体可以参考小程序官方API说明 : https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/login/auth.code2Session.html
  */
 @Data
 public class Code2SessionResponse {

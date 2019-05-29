@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.net.URI;
-import java.util.Date;
 
 /**
  * Created by EalenXie on 2018/11/26 10:50.
@@ -46,7 +45,7 @@ public class WxAccountService implements WxAppletService {
 
     /**
      * 微信的 code2session 接口 获取微信用户信息
-     * 官方说明 : https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/code2Session.html
+     * 官方说明 : https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/login/auth.code2Session.html
      */
     private String code2Session(String jsCode) {
         String code2SessionUrl = "https://api.weixin.qq.com/sns/jscode2session";

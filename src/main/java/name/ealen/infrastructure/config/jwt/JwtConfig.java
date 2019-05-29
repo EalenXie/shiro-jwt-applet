@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -30,7 +31,7 @@ public class JwtConfig {
      */
     private static final long EXPIRE_TIME = 7200;
 
-    @Autowired
+    @Resource
     private StringRedisTemplate redisTemplate;
 
     /**
