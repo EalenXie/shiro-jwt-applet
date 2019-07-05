@@ -3,6 +3,7 @@ package name.ealen.infrastructure.config.jwt;
 import name.ealen.domain.vo.JwtToken;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;
@@ -24,9 +25,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        String auth = getAuthzHeader(request);
-        return auth != null && !auth.equals("");
-
+        return !StringUtils.isEmpty(getAuthzHeader(request));
     }
 
     /**
