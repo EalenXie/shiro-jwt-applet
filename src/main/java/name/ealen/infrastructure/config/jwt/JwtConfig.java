@@ -3,14 +3,12 @@ package name.ealen.infrastructure.config.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import name.ealen.domain.entity.WxAccount;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +29,7 @@ public class JwtConfig {
     private static final long EXPIRE_TIME = 7200;
 
     @Resource
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 根据微信用户登陆信息创建 token
@@ -52,7 +50,7 @@ public class JwtConfig {
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRE_TIME * 1000))  //JWT 配置过期时间的正确姿势
                 .sign(algorithm);
         //2 . Redis缓存JWT, 注 : 请和JWT过期时间一致
-        redisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, EXPIRE_TIME, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set("JWT-SESSION-" + jwtId, token, EXPIRE_TIME, TimeUnit.SECONDS);
         return token;
     }
 
@@ -67,8 +65,7 @@ public class JwtConfig {
     public boolean verifyToken(String token) {
         try {
             //1 . 根据token解密，解密出jwt-id , 先从redis中查找出redisToken，匹配是否相同
-            String redisToken = redisTemplate.opsForValue().get("JWT-SESSION-" + getJwtIdByToken(token));
-            if (Objects.isNull(redisToken)) return false;
+            String redisToken = stringRedisTemplate.opsForValue().get("JWT-SESSION-" + getJwtIdByToken(token));
             if (!redisToken.equals(token)) return false;
             //2 . 得到算法相同的JWTVerifier
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
@@ -81,7 +78,7 @@ public class JwtConfig {
             //3 . 验证token
             verifier.verify(redisToken);
             //4 . Redis缓存JWT续期
-            redisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, EXPIRE_TIME, TimeUnit.SECONDS);
+            stringRedisTemplate.opsForValue().set("JWT-SESSION-" + getJwtIdByToken(token), redisToken, EXPIRE_TIME, TimeUnit.SECONDS);
             return true;
         } catch (Exception e) { //捕捉到任何异常都视为校验失败
             return false;
@@ -91,21 +88,21 @@ public class JwtConfig {
     /**
      * 根据Token获取wxOpenId(注意坑点 : 就算token不正确，也有可能解密出wxOpenId,同下)
      */
-    public String getWxOpenIdByToken(String token) throws JWTDecodeException {
+    public String getWxOpenIdByToken(String token)  {
         return JWT.decode(token).getClaim("wxOpenId").asString();
     }
 
     /**
      * 根据Token获取sessionKey
      */
-    public String getSessionKeyByToken(String token) throws JWTDecodeException {
+    public String getSessionKeyByToken(String token)  {
         return JWT.decode(token).getClaim("sessionKey").asString();
     }
 
     /**
      * 根据Token 获取jwt-id
      */
-    private String getJwtIdByToken(String token) throws JWTDecodeException {
+    private String getJwtIdByToken(String token)  {
         return JWT.decode(token).getClaim("jwt-id").asString();
     }
 }
